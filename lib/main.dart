@@ -5,8 +5,8 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'page/whatsapp_web/binding.dart';
-import 'page/whatsapp_web/view.dart';
+import 'pages/whatsapp_web/binding.dart';
+import 'pages/whatsapp_web/view.dart';
 
 Future<void> main() async {
   // https://inappwebview.dev/docs/get-started/installation/
