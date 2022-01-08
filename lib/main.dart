@@ -5,6 +5,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'pages/javascript_communication_example.dart';
 import 'pages/whatsapp_web/binding.dart';
 import 'pages/whatsapp_web/view.dart';
 
@@ -33,11 +34,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Whatsapp Web',
+      initialRoute: '/javascriptCommunication1Example',
       getPages: [
         GetPage(
           name: '/',
           page: () => WhatsappWebPage(),
           binding: WhatsappWebBinding(),
+        ),
+        GetPage(
+          name: '/javascriptCommunication1Example',
+          page: () => const JavascriptCommunication1Example(),
         ),
       ],
     );
