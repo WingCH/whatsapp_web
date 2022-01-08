@@ -38,7 +38,6 @@ class _JavascriptCommunication1ExampleState
     <body>
         <h1>JavaScript Handlers</h1>
         <script>
-        
             window.addEventListener("flutterInAppWebViewPlatformReady", function(event) {
             console.log("[WEB] Trigger flutterInAppWebViewPlatformReady");
             console.log("[WEB] call handlerFoo");
@@ -72,9 +71,22 @@ class _JavascriptCommunication1ExampleState
                   controller.addJavaScriptHandler(
                       handlerName: 'handlerFooWithArgs',
                       callback: (args) {
-                        print('[FLUTTER] handlerFooWithArgs received result: ' + args.toString());
+                        print('[FLUTTER] handlerFooWithArgs received result: ' +
+                            args.toString());
                         // it will print: [1, true, [bar, 5], {foo: baz}, {bar: bar_value, baz: baz_value}]
                       });
+                },
+                onLoadStop: (controller, url) async {
+                  await controller.evaluateJavascript(source: '''
+                              window.addEventListener("message", (event) => {
+              console.log("[WEB] Trigger addEventListener");
+              console.log(event.data);
+            }, false);
+            ''');
+                  await Future.delayed(Duration(seconds: 5));
+
+                  await controller.evaluateJavascript(
+                      source: 'window.postMessage({foo: 1, bar: false});');
                 },
                 onConsoleMessage: (controller, consoleMessage) {
                   print(consoleMessage.message);
