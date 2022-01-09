@@ -26,8 +26,6 @@ class WhatsappWebLogic extends GetxController {
     ),
   );
 
-  Rx<String> url = Rx<String>('');
-  Rx<double> progress = Rx<double>(0);
   final urlController = TextEditingController();
 
   @override
