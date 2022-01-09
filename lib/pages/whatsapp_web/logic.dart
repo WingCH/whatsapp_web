@@ -32,4 +32,13 @@ class WhatsappWebLogic extends GetxController {
   void onInit() {
     super.onInit();
   }
+
+  void setupQrCodeUI() {
+    webViewController?.evaluateJavascript(
+        source:
+            'document.getElementsByClassName(\'landing-wrapper\')[0].style.minWidth = "0";');
+    webViewController?.evaluateJavascript(
+        source:
+            'document.getElementsByClassName(\'landing-header\')[0].style.display = "none";');
+  }
 }

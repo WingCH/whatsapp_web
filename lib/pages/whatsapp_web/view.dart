@@ -28,6 +28,14 @@ class WhatsappWebPage extends StatelessWidget {
                   initialOptions: logic.options,
                   onWebViewCreated: (controller) {
                     logic.webViewController = controller;
+                    print('[FLUTTER] onWebViewCreated');
+                    controller.addJavaScriptHandler(
+                        handlerName: 'renderedContent',
+                        callback: (args) {
+                          print('[FLUTTER] renderedContent');
+
+                          logic.setupQrCodeUI();
+                        });
                   },
                   onLoadStart: (controller, url) {
                     logic.urlController.text = url.toString();
@@ -65,6 +73,7 @@ class WhatsappWebPage extends StatelessWidget {
                     // return NavigationActionPolicy.ALLOW;
                   },
                   onLoadStop: (controller, url) async {
+                    print('[FLUTTER] onLoadStop');
                     final String rawJs = await rootBundle
                         .loadString('assets/js/mutationObserver.js');
                     await controller.evaluateJavascript(source: rawJs);
@@ -82,7 +91,7 @@ class WhatsappWebPage extends StatelessWidget {
                     print('[onUpdateVisitedHistory] url: $url');
                   },
                   onConsoleMessage: (controller, consoleMessage) {
-                    print(consoleMessage);
+                    print('[WEB] $consoleMessage');
                   },
                 ),
               ],
