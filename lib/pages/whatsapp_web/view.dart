@@ -23,7 +23,7 @@ class WhatsappWebPage extends StatelessWidget {
                 InAppWebView(
                   key: logic.webViewKey,
                   initialUrlRequest: URLRequest(
-                    url: Uri.parse('https://web.whatsapp.com/'),
+                    url: state.initUri,
                   ),
                   initialOptions: logic.options,
                   onWebViewCreated: (controller) {
@@ -37,9 +37,6 @@ class WhatsappWebPage extends StatelessWidget {
                           logic.setupQrCodeUI();
                         });
                   },
-                  onLoadStart: (controller, url) {
-                    logic.urlController.text = url.toString();
-                  },
                   androidOnPermissionRequest:
                       (controller, origin, resources) async {
                     return PermissionRequestResponse(
@@ -49,6 +46,12 @@ class WhatsappWebPage extends StatelessWidget {
                   shouldOverrideUrlLoading:
                       (controller, navigationAction) async {
                     var uri = navigationAction.request.url!;
+
+                    // BUG: https://github.com/pichillilorenzo/flutter_inappwebview/issues/863
+                    // FIX: iOS 用useShouldOverrideUrlLoading會about:blank白畫面
+                    if (uri == state.initUri) {
+                      return NavigationActionPolicy.ALLOW;
+                    }
                     return NavigationActionPolicy.CANCEL;
                     // if (![
                     //   'http',

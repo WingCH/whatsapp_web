@@ -1,5 +1,3 @@
 class WhatsappWebState {
-  WhatsappWebState() {
-    ///Initialize variables
-  }
+  final Uri initUri = Uri.parse('https://web.whatsapp.com/');
 }
