@@ -26,7 +26,6 @@ class WhatsappWebLogic extends GetxController {
     ),
   );
 
-  late PullToRefreshController pullToRefreshController;
   Rx<String> url = Rx<String>('');
   Rx<double> progress = Rx<double>(0);
   final urlController = TextEditingController();
@@ -34,18 +33,5 @@ class WhatsappWebLogic extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    pullToRefreshController = PullToRefreshController(
-      options: PullToRefreshOptions(
-        color: Colors.blue,
-      ),
-      onRefresh: () async {
-        if (Platform.isAndroid) {
-          webViewController?.reload();
-        } else if (Platform.isIOS) {
-          webViewController?.loadUrl(
-              urlRequest: URLRequest(url: await webViewController?.getUrl()));
-        }
-      },
-    );
   }
 }

@@ -18,19 +18,6 @@ class WhatsappWebPage extends StatelessWidget {
       appBar: AppBar(title: const Text('Official InAppWebView website')),
       body: SafeArea(
         child: Column(children: <Widget>[
-          TextField(
-            decoration: const InputDecoration(prefixIcon: Icon(Icons.search)),
-            controller: logic.urlController,
-            keyboardType: TextInputType.url,
-            onSubmitted: (value) {
-              var url = Uri.parse(value);
-              if (url.scheme.isEmpty) {
-                url = Uri.parse('https://www.google.com/search?q=' + value);
-              }
-              logic.webViewController
-                  ?.loadUrl(urlRequest: URLRequest(url: url));
-            },
-          ),
           Expanded(
             child: Obx(() {
               return Stack(
@@ -38,12 +25,9 @@ class WhatsappWebPage extends StatelessWidget {
                   InAppWebView(
                     key: logic.webViewKey,
                     initialUrlRequest: URLRequest(
-                      url: Uri.parse(
-                        'https://web.whatsapp.com/',
-                      ),
+                      url: Uri.parse('https://web.whatsapp.com/'),
                     ),
                     initialOptions: logic.options,
-                    pullToRefreshController: logic.pullToRefreshController,
                     onWebViewCreated: (controller) {
                       logic.webViewController = controller;
                     },
@@ -59,51 +43,57 @@ class WhatsappWebPage extends StatelessWidget {
                     shouldOverrideUrlLoading:
                         (controller, navigationAction) async {
                       var uri = navigationAction.request.url!;
-
-                      if (![
-                        'http',
-                        'https',
-                        'file',
-                        'chrome',
-                        'data',
-                        'javascript',
-                        'about'
-                      ].contains(uri.scheme)) {
-                        print(uri.toString());
-                        // if (await canLaunch(uri)) {
-                        //   // Launch the App
-                        //   await launch(
-                        //     url,
-                        //   );
-                        //   // and cancel the request
-                        //   return NavigationActionPolicy.CANCEL;
-                        // }
-                      }
-
-                      return NavigationActionPolicy.ALLOW;
+                      return NavigationActionPolicy.CANCEL;
+                      // if (![
+                      //   'http',
+                      //   'https',
+                      //   'file',
+                      //   'chrome',
+                      //   'data',
+                      //   'javascript',
+                      //   'about'
+                      // ].contains(uri.scheme)) {
+                      //   print(uri.toString());
+                      //   // if (await canLaunch(uri)) {
+                      //   //   // Launch the App
+                      //   //   await launch(
+                      //   //     url,
+                      //   //   );
+                      //   //   // and cancel the request
+                      //   //   return NavigationActionPolicy.CANCEL;
+                      //   // }
+                      // }
+                      //
+                      // return NavigationActionPolicy.ALLOW;
                     },
                     onLoadStop: (controller, url) async {
-                      logic.pullToRefreshController.endRefreshing();
-                      logic.urlController.text = url.toString();
+                      await controller.evaluateJavascript(source: '''
+MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+
+var observer = new MutationObserver(function(mutations, observer) {
+    // fired when a mutation occurs
+    console.log(mutations, observer);
+    // ...
+});
+
+observer.observe(document, {
+  subtree: true,
+  attributes: true
+  //...
+});
+            ''');
                     },
                     onLoadError: (controller, url, code, message) {
-                      logic.pullToRefreshController.endRefreshing();
+                      print('[onLoadError] url: $url');
+                      print('[onLoadError] code: $code');
+                      print('[onLoadError] message: $message');
                     },
                     onProgressChanged: (controller, progress) async {
-                      if (progress == 100) {
-                        logic.pullToRefreshController.endRefreshing();
-                        String? html = await logic.webViewController?.getHtml();
-                        debugPrint(html);
-                      }
-                      logic.progress.value = progress / 100;
-                      // logic.urlController.text = this.url;
+                      print('[onProgressChanged] progress: $progress');
                     },
                     onUpdateVisitedHistory: (controller, url, androidIsReload) {
-                      // setState(() {
-                      //   this.url = url.toString();
-                      //   urlController.text = this.url;
-                      // });
-                      logic.urlController.text = url.toString();
+                      print('[onUpdateVisitedHistory] url: $url');
+                      print('[onUpdateVisitedHistory] url: $url');
                     },
                     onConsoleMessage: (controller, consoleMessage) {
                       print(consoleMessage);

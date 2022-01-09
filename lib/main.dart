@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Whatsapp Web',
-      initialRoute: '/javascriptCommunication1Example',
+      // initialRoute: '/javascriptCommunication1Example',
       getPages: [
         GetPage(
           name: '/',
