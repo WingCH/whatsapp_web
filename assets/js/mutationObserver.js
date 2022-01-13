@@ -1,21 +1,28 @@
 MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 
-// 已渲染内容?
-var renderedContent = false;
 
 var observer = new MutationObserver(function (mutations, observer) {
-
   // 當找到`div.landing-wrapper`時, 當渲染
-  const found = document.querySelectorAll('#app > div > div.landing-wrapper');
-  if (found.length && renderedContent == false) {
-    renderedContent = true;
-    window.flutter_inappwebview
-      .callHandler('renderedContent');
-    console.log("sent renderedContent");
-    // for (const { textContent } of found) {
-    //   console.log("Matching element found: " + textContent);
-    // }
+  const landingWrapperFounder = document.querySelectorAll('#app > div.app-wrapper-web > div.landing-wrapper');
+  const chatListWrapperFounder = document.querySelectorAll('#app > div.app-wrapper-web > div.two');
+
+  /*
+  0 = landing page
+  1 = chat page
+  2 = loading page
+  */
+
+  var result;
+  if (landingWrapperFounder.length) {
+    result = 0;
+  } else if (chatListWrapperFounder.length) {
+    result = 1;
+  } else {
+    result = 2;
   }
+
+  window.flutter_inappwebview
+    .callHandler('pageStatusHandler', result);
 });
 
 observer.observe(document, {

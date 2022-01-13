@@ -1,7 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
 
@@ -32,17 +30,36 @@ class WhatsappWebLogic extends GetxController {
   @override
   void onInit() {
     super.onInit();
+
+    ever<WhatsappWebStatus?>(state.status, (status) {
+      switch (status) {
+        case WhatsappWebStatus.landing:
+          // Adjust landing page ui
+          webViewController?.evaluateJavascript(
+            source:
+                'document.getElementsByClassName(\'landing-wrapper\')[0].style.minWidth = "0";'
+                'document.getElementsByClassName(\'landing-header\')[0].style.display = "none";',
+          );
+          break;
+        case WhatsappWebStatus.chat:
+          break;
+        case WhatsappWebStatus.loading:
+        case null:
+          // TODO: Handle this case.
+          break;
+      }
+    });
   }
 
   void onWebViewCreated(InAppWebViewController controller) {
     webViewController = controller;
     print('[FLUTTER] onWebViewCreated');
     controller.addJavaScriptHandler(
-        handlerName: 'renderedContent',
+        handlerName: 'pageStatusHandler',
         callback: (args) {
-          print('[FLUTTER] renderedContent');
-
-          setupQrCodeUI();
+          int code = args.first;
+          state.status.value = WhatsappWebStatus.values[code];
+          // setupQrCodeUI();
         });
   }
 
