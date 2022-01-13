@@ -42,6 +42,11 @@ class WhatsappWebLogic extends GetxController {
           );
           break;
         case WhatsappWebStatus.chat:
+          // Adjust chat page ui
+          webViewController?.evaluateJavascript(
+              source:
+                  ' document.querySelector(\'#app > div.app-wrapper-web > div.two\').style.minWidth = "0";');
+          hideShowChatContent(hide: true);
           break;
         case WhatsappWebStatus.loading:
         case null:
@@ -59,7 +64,6 @@ class WhatsappWebLogic extends GetxController {
         callback: (args) {
           int code = args.first;
           state.status.value = WhatsappWebStatus.values[code];
-          // setupQrCodeUI();
         });
   }
 
@@ -69,11 +73,23 @@ class WhatsappWebLogic extends GetxController {
     await controller.evaluateJavascript(source: rawJs);
   }
 
-  void setupQrCodeUI() {
+  void changeView() {
+    // show chat list
+  }
+
+  void hideShowChatContent({required bool hide}) {
+    String display = hide ? 'none' : '';
     webViewController?.evaluateJavascript(
       source:
-          'document.getElementsByClassName(\'landing-wrapper\')[0].style.minWidth = "0";'
-          'document.getElementsByClassName(\'landing-header\')[0].style.display = "none";',
+          'document.querySelectorAll(\'#app > div.app-wrapper-web > div.two > div\')[3].style.display = "$display";',
+    );
+  }
+
+  void hideShowContactList({required bool hide}) {
+    String display = hide ? 'none' : '';
+    webViewController?.evaluateJavascript(
+      source:
+          'document.querySelectorAll(\'#app > div.app-wrapper-web > div.two > div\')[2].style.display = "$display";',
     );
   }
 }
