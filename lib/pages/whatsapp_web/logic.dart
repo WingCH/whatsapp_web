@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
 
@@ -33,12 +34,29 @@ class WhatsappWebLogic extends GetxController {
     super.onInit();
   }
 
+  void onWebViewCreated(InAppWebViewController controller) {
+    webViewController = controller;
+    print('[FLUTTER] onWebViewCreated');
+    controller.addJavaScriptHandler(
+        handlerName: 'renderedContent',
+        callback: (args) {
+          print('[FLUTTER] renderedContent');
+
+          setupQrCodeUI();
+        });
+  }
+
+  void onLoadStop(InAppWebViewController controller, Uri? url) async {
+    final String rawJs =
+        await rootBundle.loadString('assets/js/mutationObserver.js');
+    await controller.evaluateJavascript(source: rawJs);
+  }
+
   void setupQrCodeUI() {
     webViewController?.evaluateJavascript(
-        source:
-            'document.getElementsByClassName(\'landing-wrapper\')[0].style.minWidth = "0";');
-    webViewController?.evaluateJavascript(
-        source:
-            'document.getElementsByClassName(\'landing-header\')[0].style.display = "none";');
+      source:
+          'document.getElementsByClassName(\'landing-wrapper\')[0].style.minWidth = "0";'
+          'document.getElementsByClassName(\'landing-header\')[0].style.display = "none";',
+    );
   }
 }

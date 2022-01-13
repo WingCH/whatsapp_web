@@ -26,22 +26,13 @@ class WhatsappWebPage extends StatelessWidget {
                     url: state.initUri,
                   ),
                   initialOptions: logic.options,
-                  onWebViewCreated: (controller) {
-                    logic.webViewController = controller;
-                    print('[FLUTTER] onWebViewCreated');
-                    controller.addJavaScriptHandler(
-                        handlerName: 'renderedContent',
-                        callback: (args) {
-                          print('[FLUTTER] renderedContent');
-
-                          logic.setupQrCodeUI();
-                        });
-                  },
+                  onWebViewCreated: logic.onWebViewCreated,
                   androidOnPermissionRequest:
                       (controller, origin, resources) async {
                     return PermissionRequestResponse(
-                        resources: resources,
-                        action: PermissionRequestResponseAction.GRANT);
+                      resources: resources,
+                      action: PermissionRequestResponseAction.GRANT,
+                    );
                   },
                   shouldOverrideUrlLoading:
                       (controller, navigationAction) async {
@@ -75,12 +66,7 @@ class WhatsappWebPage extends StatelessWidget {
                     //
                     // return NavigationActionPolicy.ALLOW;
                   },
-                  onLoadStop: (controller, url) async {
-                    print('[FLUTTER] onLoadStop');
-                    final String rawJs = await rootBundle
-                        .loadString('assets/js/mutationObserver.js');
-                    await controller.evaluateJavascript(source: rawJs);
-                  },
+                  onLoadStop: logic.onLoadStop,
                   onLoadError: (controller, url, code, message) {
                     print('[onLoadError] url: $url');
                     print('[onLoadError] code: $code');
