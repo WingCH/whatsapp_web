@@ -32,9 +32,9 @@ class WhatsappWebLogic extends GetxController {
   void onInit() {
     super.onInit();
 
-    ever<WhatsappWebStatus?>(state.status, (status) {
-      switch (status) {
-        case WhatsappWebStatus.landing:
+    ever<WhatsappWebPageStatus?>(state.pageStatus, (pageStatus) {
+      switch (pageStatus) {
+        case WhatsappWebPageStatus.landing:
           // Adjust landing page ui
           webViewController?.evaluateJavascript(
             source:
@@ -42,24 +42,35 @@ class WhatsappWebLogic extends GetxController {
                 'document.getElementsByClassName(\'landing-header\')[0].style.display = "none";',
           );
           break;
-        case WhatsappWebStatus.chat:
-          // Adjust chat page ui
+        case WhatsappWebPageStatus.main:
+          // Adjust main page ui
           webViewController?.evaluateJavascript(
-              source:
-                  'document.querySelector(\'#app > div.app-wrapper-web > div.two\').style.minWidth = "0";'
-                  'document.querySelector(\'#app > div.app-wrapper-web > div.two\').style.minHeight = "0";');
+            source:
+                'document.querySelector(\'#app > div.app-wrapper-web > div.two\').style.minWidth = "0";'
+                'document.querySelector(\'#app > div.app-wrapper-web > div.two\').style.minHeight = "0";',
+          );
           hideShowChatContent(hide: true);
           break;
-        case WhatsappWebStatus.loading:
+        case WhatsappWebPageStatus.loading:
         case null:
           // TODO: Handle this case.
           break;
       }
     });
 
-    ever<String?>(state.chatroomName, (chatroomName) {
-      hideShowContactList(hide: true);
-      hideShowChatContent(hide: false);
+    ever<WhatsappWebMainStatus?>(state.mainStatus, (mainStatus) {
+      switch (mainStatus) {
+        case WhatsappWebMainStatus.contactList:
+          hideShowContactList(hide: false);
+          hideShowChatContent(hide: true);
+          break;
+        case WhatsappWebMainStatus.content:
+          hideShowContactList(hide: true);
+          hideShowChatContent(hide: false);
+          break;
+        case null:
+          break;
+      }
     });
   }
 
@@ -70,15 +81,16 @@ class WhatsappWebLogic extends GetxController {
         handlerName: 'pageStatusHandler',
         callback: (args) {
           int code = args.first;
-          state.status.value = WhatsappWebStatus.values[code];
+          state.pageStatus.value = WhatsappWebPageStatus.values[code];
         });
 
     controller.addJavaScriptHandler(
         handlerName: 'chatroomChange',
         callback: (args) {
           String chatroomName = args.first;
-          state.chatroomName.value = chatroomName;
           print(chatroomName);
+
+          state.mainStatus.value = WhatsappWebMainStatus.content;
         });
   }
 
@@ -88,8 +100,8 @@ class WhatsappWebLogic extends GetxController {
     await controller.evaluateJavascript(source: rawJs);
   }
 
-  void changeView() {
-    // show chat list
+  void showContactList() {
+    state.mainStatus.value = WhatsappWebMainStatus.contactList;
   }
 
   void hideShowChatContent({required bool hide}) {
