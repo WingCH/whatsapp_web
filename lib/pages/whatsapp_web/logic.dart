@@ -46,7 +46,8 @@ class WhatsappWebLogic extends GetxController {
           // Adjust chat page ui
           webViewController?.evaluateJavascript(
               source:
-                  ' document.querySelector(\'#app > div.app-wrapper-web > div.two\').style.minWidth = "0";');
+                  'document.querySelector(\'#app > div.app-wrapper-web > div.two\').style.minWidth = "0";'
+                  'document.querySelector(\'#app > div.app-wrapper-web > div.two\').style.minHeight = "0";');
           hideShowChatContent(hide: true);
           break;
         case WhatsappWebStatus.loading:
