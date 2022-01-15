@@ -85,29 +85,29 @@ class WhatsappWebPage extends StatelessWidget {
               ],
             ),
           ),
-          ButtonBar(
-            alignment: MainAxisAlignment.center,
-            children: <Widget>[
-              ElevatedButton(
-                child: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  logic.webViewController?.goBack();
-                },
-              ),
-              ElevatedButton(
-                child: const Icon(Icons.arrow_forward),
-                onPressed: () {
-                  logic.webViewController?.goForward();
-                },
-              ),
-              ElevatedButton(
-                child: const Icon(Icons.refresh),
-                onPressed: () {
-                  logic.webViewController?.reload();
-                },
-              ),
-            ],
-          ),
+          // ButtonBar(
+          //   alignment: MainAxisAlignment.center,
+          //   children: <Widget>[
+          //     ElevatedButton(
+          //       child: const Icon(Icons.arrow_back),
+          //       onPressed: () {
+          //         logic.webViewController?.goBack();
+          //       },
+          //     ),
+          //     ElevatedButton(
+          //       child: const Icon(Icons.arrow_forward),
+          //       onPressed: () {
+          //         logic.webViewController?.goForward();
+          //       },
+          //     ),
+          //     ElevatedButton(
+          //       child: const Icon(Icons.refresh),
+          //       onPressed: () {
+          //         logic.webViewController?.reload();
+          //       },
+          //     ),
+          //   ],
+          // ),
         ]),
       ),
     );

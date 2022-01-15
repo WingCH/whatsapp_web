@@ -20,7 +20,6 @@ class WhatsappWebLogic extends GetxController {
     ),
     android: AndroidInAppWebViewOptions(
       useHybridComposition: true,
-
     ),
     ios: IOSInAppWebViewOptions(
       allowsInlineMediaPlayback: true,
@@ -56,6 +55,11 @@ class WhatsappWebLogic extends GetxController {
           break;
       }
     });
+
+    ever<String?>(state.chatroomName, (chatroomName) {
+      hideShowContactList(hide: true);
+      hideShowChatContent(hide: false);
+    });
   }
 
   void onWebViewCreated(InAppWebViewController controller) {
@@ -72,6 +76,7 @@ class WhatsappWebLogic extends GetxController {
         handlerName: 'chatroomChange',
         callback: (args) {
           String chatroomName = args.first;
+          state.chatroomName.value = chatroomName;
           print(chatroomName);
         });
   }
