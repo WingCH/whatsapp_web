@@ -16,9 +16,11 @@ class WhatsappWebLogic extends GetxController {
       mediaPlaybackRequiresUserGesture: false,
       userAgent:
           'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.2 Safari/605.1.15',
+      supportZoom: false,
     ),
     android: AndroidInAppWebViewOptions(
       useHybridComposition: true,
+
     ),
     ios: IOSInAppWebViewOptions(
       allowsInlineMediaPlayback: true,
@@ -64,6 +66,13 @@ class WhatsappWebLogic extends GetxController {
         callback: (args) {
           int code = args.first;
           state.status.value = WhatsappWebStatus.values[code];
+        });
+
+    controller.addJavaScriptHandler(
+        handlerName: 'chatroomChange',
+        callback: (args) {
+          String chatroomName = args.first;
+          print(chatroomName);
         });
   }
 
