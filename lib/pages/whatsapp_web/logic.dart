@@ -52,8 +52,9 @@ class WhatsappWebLogic extends GetxController {
           // Adjust main page ui
           webViewController?.evaluateJavascript(
             source:
-                'document.querySelector(\'#app > div.app-wrapper-web > div.two\').style.minWidth = "0";'
-                'document.querySelector(\'#app > div.app-wrapper-web > div.two\').style.minHeight = "0";',
+                'document.querySelector(\'#app > div.app-wrapper-web > div.two, #app > div.app-wrapper-web > div.three\').style.minWidth = "0";'
+                'document.querySelector(\'#app > div.app-wrapper-web > div.two, #app > div.app-wrapper-web > div.three\').style.minHeight = "0";'
+                'document.querySelector(\'#app > div.app-wrapper-web > div.two > div:nth-child(2) > div:nth-child(3), #app > div.app-wrapper-web > div.three > div:nth-child(2) > div:nth-child(3)\').style.width = "100%"',
           );
           hideShowChatContent(hide: true);
           break;
@@ -144,7 +145,7 @@ class WhatsappWebLogic extends GetxController {
     String display = hide ? 'none' : '';
     webViewController?.evaluateJavascript(
       source:
-          'document.querySelectorAll(\'#app > div.app-wrapper-web > div.two > div\')[3].style.display = "$display";',
+          'document.querySelectorAll(\'#app > div.app-wrapper-web > div.two > div, #app > div.app-wrapper-web > div.three > div\')[3].style.display = "$display";',
     );
   }
 
@@ -152,7 +153,7 @@ class WhatsappWebLogic extends GetxController {
     String display = hide ? 'none' : '';
     webViewController?.evaluateJavascript(
       source:
-          'document.querySelectorAll(\'#app > div.app-wrapper-web > div.two > div\')[2].style.display = "$display";',
+          'document.querySelectorAll(\'#app > div.app-wrapper-web > div.two > div, #app > div.app-wrapper-web > div.three > div\')[2].style.display = "$display";',
     );
   }
 }

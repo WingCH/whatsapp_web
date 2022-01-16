@@ -2,7 +2,7 @@ MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 var lasterChatroomName;
 var observer = new MutationObserver(function (mutations, observer) {
     const landingWrapperFounder = document.querySelectorAll('#app > div.app-wrapper-web > div.landing-wrapper');
-    const chatListWrapperFounder = document.querySelectorAll('#app > div.app-wrapper-web > div.two,div.three');
+    const chatListWrapperFounder = document.querySelectorAll('#app > div.app-wrapper-web > div.two, #app > div.app-wrapper-web > div.three');
 
     /*
     0 = landing page
