@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'logic.dart';
 
@@ -13,10 +15,7 @@ class WhatsappWebPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async {
-        logic.showContactList();
-        return false;
-      },
+      onWillPop: logic.handleWillPop,
       child: Scaffold(
         body: SafeArea(
           child: Column(children: <Widget>[
@@ -46,28 +45,27 @@ class WhatsappWebPage extends StatelessWidget {
                       if (uri == state.initUri) {
                         return NavigationActionPolicy.ALLOW;
                       }
-                      return NavigationActionPolicy.CANCEL;
-                      // if (![
-                      //   'http',
-                      //   'https',
-                      //   'file',
-                      //   'chrome',
-                      //   'data',
-                      //   'javascript',
-                      //   'about'
-                      // ].contains(uri.scheme)) {
-                      //   print(uri.toString());
-                      //   // if (await canLaunch(uri)) {
-                      //   //   // Launch the App
-                      //   //   await launch(
-                      //   //     url,
-                      //   //   );
-                      //   //   // and cancel the request
-                      //   //   return NavigationActionPolicy.CANCEL;
-                      //   // }
-                      // }
-                      //
-                      // return NavigationActionPolicy.ALLOW;
+                      if ([
+                        'http',
+                        'https',
+                        'file',
+                        'chrome',
+                        'data',
+                        'javascript',
+                        'about'
+                      ].contains(uri.scheme)) {
+                        // print(uri.toString());
+                        if (await canLaunch(uri.toString())) {
+                          // Launch the App
+                          await launch(
+                            uri.toString(),
+                          );
+                          // and cancel the request
+                          return NavigationActionPolicy.CANCEL;
+                        }
+                      }
+
+                      return NavigationActionPolicy.ALLOW;
                     },
                     onLoadStop: logic.onLoadStop,
                     onLoadError: (controller, url, code, message) {
@@ -96,6 +94,12 @@ class WhatsappWebPage extends StatelessWidget {
                           url.toString(),
                         ),
                       );
+                    },
+                    iosOnNavigationResponse: (a, b) async{
+                      print('iosOnNavigationResponse');
+                      print(a);
+                      print(b);
+                      return IOSNavigationResponseAction.CANCEL;
                     },
                   ),
                 ],
@@ -129,4 +133,6 @@ class WhatsappWebPage extends StatelessWidget {
       ),
     );
   }
+
+
 }

@@ -29,6 +29,8 @@ class WhatsappWebLogic extends GetxController {
     ),
     ios: IOSInAppWebViewOptions(
       allowsInlineMediaPlayback: true,
+      allowsBackForwardNavigationGestures: false,
+      // useOnNavigationResponse: true,
     ),
   );
 
@@ -38,7 +40,7 @@ class WhatsappWebLogic extends GetxController {
   void onInit() {
     super.onInit();
 
-    ever<WhatsappWebPageStatus?>(state.pageStatus, (pageStatus) {
+    ever<WhatsappWebPageStatus?>(state.pageStatus, (pageStatus) async {
       switch (pageStatus) {
         case WhatsappWebPageStatus.landing:
           // Adjust landing page ui
@@ -49,6 +51,7 @@ class WhatsappWebLogic extends GetxController {
           );
           break;
         case WhatsappWebPageStatus.main:
+          print('WhatsappWebPageStatus.main');
           // Adjust main page ui
           webViewController?.evaluateJavascript(
             source:
@@ -56,6 +59,10 @@ class WhatsappWebLogic extends GetxController {
                 'document.querySelector(\'#app > div.app-wrapper-web > div.two, #app > div.app-wrapper-web > div.three\').style.minHeight = "0";'
                 'document.querySelector(\'#app > div.app-wrapper-web > div.two > div:nth-child(2) > div:nth-child(3), #app > div.app-wrapper-web > div.three > div:nth-child(2) > div:nth-child(3)\').style.width = "100%"',
           );
+
+          final String rawJs =
+              await rootBundle.loadString('assets/js/contactListListener.js');
+          await webViewController?.evaluateJavascript(source: rawJs);
           hideShowChatContent(hide: true);
           break;
         case WhatsappWebPageStatus.loading:
@@ -92,11 +99,8 @@ class WhatsappWebLogic extends GetxController {
         });
 
     controller.addJavaScriptHandler(
-        handlerName: 'chatroomChange',
-        callback: (args) {
-          String chatroomName = args.first;
-          print(chatroomName);
-
+        handlerName: 'contactListOnClick',
+        callback: (_) {
           state.mainStatus.value = WhatsappWebMainStatus.content;
         });
 
@@ -155,5 +159,13 @@ class WhatsappWebLogic extends GetxController {
       source:
           'document.querySelectorAll(\'#app > div.app-wrapper-web > div.two > div, #app > div.app-wrapper-web > div.three > div\')[2].style.display = "$display";',
     );
+  }
+
+  Future<bool> handleWillPop() async {
+    showContactList();
+    // webViewController?.evaluateJavascript(
+    //   source: 'latestChatroomName = "";',
+    // );
+    return false;
   }
 }
