@@ -105,15 +105,15 @@ class WhatsappWebLogic extends GetxController {
         if (data.isNotEmpty) {
           final String receivedFileInBase64 = data[0];
           final String receivedMimeType = data[1];
+          final String fileName = data[2];
+          final String fileType = receivedMimeType.split('/').last;
 
           print('receivedFileInBase64: $receivedFileInBase64');
           print('receivedMimeType: $receivedMimeType');
+          print('fileName: $fileName');
+          print('fileType: $fileType');
 
-          // NOTE: create a method that will handle your extensions
-          const String yourExtension = 'png'; // 'pdf'
-
-          _createFileFromBase64(
-              receivedFileInBase64, 'YourFileName', yourExtension);
+          _createFileFromBase64(receivedFileInBase64, fileName, fileType);
         }
       },
     );

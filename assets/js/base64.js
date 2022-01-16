@@ -14,8 +14,9 @@ xhr.onload = function (e) {
             var base64ContentArray = base64data.split(",");
             var mimeType = base64ContentArray[0].match(/[^:\s*]\w+\/[\w-+\d.]+(?=[;| ])/)[0];
             var decodedFile = base64ContentArray[1];
+            var fileName = blobUrl.replace('blob:https://web.whatsapp.com/', '')
             console.log(mimeType);
-            window.flutter_inappwebview.callHandler('blobToBase64Handler', decodedFile, mimeType);
+            window.flutter_inappwebview.callHandler('blobToBase64Handler', decodedFile, mimeType, fileName);
         };
     };
 };
