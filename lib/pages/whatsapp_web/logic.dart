@@ -1,7 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'state.dart';
 
@@ -17,6 +22,7 @@ class WhatsappWebLogic extends GetxController {
       userAgent:
           'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.2 Safari/605.1.15',
       supportZoom: false,
+      useOnDownloadStart: true,
     ),
     android: AndroidInAppWebViewOptions(
       useHybridComposition: true,
@@ -92,6 +98,36 @@ class WhatsappWebLogic extends GetxController {
 
           state.mainStatus.value = WhatsappWebMainStatus.content;
         });
+
+    controller.addJavaScriptHandler(
+      handlerName: 'blobToBase64Handler',
+      callback: (data) async {
+        if (data.isNotEmpty) {
+          final String receivedFileInBase64 = data[0];
+          final String receivedMimeType = data[1];
+
+          print('receivedFileInBase64: $receivedFileInBase64');
+          print('receivedMimeType: $receivedMimeType');
+
+          // NOTE: create a method that will handle your extensions
+          const String yourExtension = 'png'; // 'pdf'
+
+          _createFileFromBase64(
+              receivedFileInBase64, 'YourFileName', yourExtension);
+        }
+      },
+    );
+  }
+
+  _createFileFromBase64(
+      String base64content, String fileName, String yourExtension) async {
+    var bytes = base64Decode(base64content.replaceAll('\n', ''));
+    final output = await getExternalStorageDirectory();
+    final String outputPath = output?.path ?? '';
+    final file = File('$outputPath/$fileName.$yourExtension');
+    await file.writeAsBytes(bytes.buffer.asUint8List());
+    print('$outputPath/$fileName.$yourExtension');
+    await OpenFile.open('$outputPath/$fileName.$yourExtension');
   }
 
   void onLoadStop(InAppWebViewController controller, Uri? url) async {

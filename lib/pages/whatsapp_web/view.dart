@@ -85,6 +85,18 @@ class WhatsappWebPage extends StatelessWidget {
                     onConsoleMessage: (controller, consoleMessage) {
                       print('[WEB] $consoleMessage');
                     },
+                    onDownloadStart: (_controller, url) async {
+                      print('onDownloadStart $url');
+
+                      var jsContent =
+                          await rootBundle.loadString('assets/js/base64.js');
+                      await _controller.evaluateJavascript(
+                        source: jsContent.replaceAll(
+                          'blobUrlPlaceholder',
+                          url.toString(),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

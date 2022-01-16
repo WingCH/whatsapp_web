@@ -38,6 +38,8 @@ dependencies:
   flutter_inappwebview: ^5.3.2
   permission_handler: ^8.3.0
   url_launcher: ^6.0.17
+  path_provider: ^2.0.8
+  open_file: ^3.2.1
 
 dev_dependencies:
   flutter_test:
@@ -63,6 +65,7 @@ flutter:
 
   assets:
     - assets/js/mutationObserver.js
+    - assets/js/base64.js
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
